@@ -1,0 +1,4 @@
+# .husky/pre-commit
+
+echo "Checking for lint errors..."
+npx lint-staged
