@@ -8,9 +8,13 @@ const { mnemonicToSeed } = require('../helpers/key-helper')
 const defaultNetwork = 'testnet'
 
 module.exports = class BTCKeyRepository {
-  constructor ({ network = defaultNetwork } = {}) {
+  constructor ({ network = defaultNetwork, keyToMnemonic } = {}) {
     this.network = network
-    this.keyToMnemonic = new Map()
+    this.keyToMnemonic = keyToMnemonic
+
+    if (!(keyToMnemonic instanceof Map)) {
+      throw new Error('keyToMnemonic must be an instance of Map')
+    }
   }
 
   loadMasterKey (keyName) {

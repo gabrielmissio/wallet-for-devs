@@ -1,8 +1,12 @@
 const { ethers } = require('ethers')
 
 module.exports = class EVMKeyRepository {
-  constructor () {
-    this.keyToMnemonic = new Map()
+  constructor ({ keyToMnemonic } = {}) {
+    this.keyToMnemonic = keyToMnemonic
+
+    if (!(keyToMnemonic instanceof Map)) {
+      throw new Error('keyToMnemonic must be an instance of Map')
+    }
   }
 
   getKeyPair (keyName, password = '', path = "m/44'/0'/0'/0/0") {
