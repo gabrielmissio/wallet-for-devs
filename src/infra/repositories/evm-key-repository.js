@@ -9,7 +9,7 @@ module.exports = class EVMKeyRepository {
     }
   }
 
-  getKeyPair (keyName, password = '', path = "m/44'/0'/0'/0/0") {
+  getKeyPair ({ keyName, password = '', path = "m/44'/0'/0'/0/0" }) {
     if (!this.keyToMnemonic.has(keyName)) {
       throw new Error('Key not found')
     }

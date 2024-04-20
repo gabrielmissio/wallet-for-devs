@@ -28,7 +28,24 @@ module.exports = class BTCKeyRepository {
     return bip32.fromSeed(seed, bitcoin.networks[this.network])
   }
 
-  getKeyPair (keyName, path = "m/44'/0'/0'/0/0") {
+  // BTC SegWit, default keyPair option
+  getKeyPair ({ keyName, path = "m/84'/0'/0'/0/0" }) {
+    const wallet = this.loadMasterKey(keyName)
+    const node = wallet.derivePath(path)
+
+    const btcAddress = bitcoin.payments.p2wpkh({
+      pubkey: node.publicKey,
+      network: bitcoin.networks[this.network]
+    }).address
+
+    return {
+      privateKey: node.privateKey,
+      publicKey: node.publicKey,
+      address: btcAddress
+    }
+  }
+
+  getLegacyKeyPair ({ keyName, path = "m/44'/0'/0'/0/0" }) {
     const wallet = this.loadMasterKey(keyName)
     const node = wallet.derivePath(path)
 
