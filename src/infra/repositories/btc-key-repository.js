@@ -7,7 +7,7 @@ const { mnemonicToSeed } = require('../helpers/key-helper')
 
 const defaultNetwork = 'testnet'
 
-module.exports = class KeyRepository {
+module.exports = class BTCKeyRepository {
   constructor ({ network = defaultNetwork } = {}) {
     this.network = network
     this.keyToMnemonic = new Map()
@@ -27,6 +27,7 @@ module.exports = class KeyRepository {
   getKeyPair (keyName, path = "m/44'/0'/0'/0/0") {
     const wallet = this.loadMasterKey(keyName)
     const node = wallet.derivePath(path)
+
     const btcAddress = bitcoin.payments.p2pkh({
       pubkey: node.publicKey,
       network: bitcoin.networks[this.network]
