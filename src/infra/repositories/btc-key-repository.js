@@ -92,31 +92,12 @@ module.exports = class BTCKeyRepository {
     return result
   }
 
-  async signTransaction ({ keyName, psbt }) {
+  getSigner ({ keyName, path }) {
     const wallet = this.loadMasterKey(keyName)
+    const privKey = wallet.derivePath(path).privateKey
+    const signer = ECPair.fromPrivateKey(privKey, { network: bitcoin.networks[this.network] })
 
-    // move to strategy
-    const keySignerMap = new Map()
-    // Avoid creating derived keys for the same path multiple times
-
-    for (const [index, input] of psbt.data.inputs.entries()) {
-      const { path } = input.bip32Derivation[0]
-      console.log({ path })
-      const signKeyName = `${keyName}-${path}`
-
-      let signer = keySignerMap.get(signKeyName)
-      if (!signer) {
-        const privKey = wallet.derivePath(path).privateKey
-        signer = ECPair.fromPrivateKey(privKey, { network: bitcoin.networks[this.network] })
-        console.log({ signer })
-        keySignerMap.set(signKeyName, signer)
-      }
-      await psbt.signInputAsync(index, signer)
-    }
-
-    const signedTx = psbt.toHex()
-
-    return { signedTx }
+    return signer
   }
 
   logInfo ({ keyName }) {
@@ -148,7 +129,7 @@ module.exports = class BTCKeyRepository {
 }
 
 function getProtocol (path) {
-  return path.split('/')[1] === "84'" ? 'btc_segwit' : 'btc_legacy'
+  return path.split('/')[1] === "84'" ? 'btc_segwit' : 'btc'
 }
 
 function convertXKey (xpub, target) {

@@ -11,7 +11,22 @@ module.exports = class BTCSegWitSignStrategy {
     const { publicKey } = this.keyRepository.exportReadOnlyKey({ keyName, path })
     const psbt = Psbt.fromHex(payload, { network: this.network })
 
-    const { signedTx } = await this.keyRepository.signTransaction({ psbt, keyName, path })
+    // Avoid creating derived keys for the same path multiple times
+    const keySignerMap = new Map()
+
+    for (const [index, input] of psbt.data.inputs.entries()) {
+      const { path } = input.bip32Derivation[0]
+      const signKeyName = `${keyName}-${path}`
+
+      let signer = keySignerMap.get(signKeyName)
+      if (!signer) {
+        signer = this.keyRepository.getSigner({ keyName, path })
+        keySignerMap.set(signKeyName, signer)
+      }
+      await psbt.signInputAsync(index, signer)
+    }
+
+    const signedTx = psbt.toHex()
 
     return {
       publicKey,

@@ -37,6 +37,7 @@ module.exports = class AccountDiscoveryUseCase {
       const path = `${basePath}/${addressIndex}`
       console.log(`trying path ${path}`)
 
+      // TODO: Replace "getKeyPair" to avoid private key exposure
       const { address } = this.keyRepository.getKeyPair({ keyName, path })
       const transactions = await this.blockchainAPI.getTransactions(address)
       console.log(`address ${address} has ${transactions?.length} transactions`)
