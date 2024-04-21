@@ -15,7 +15,7 @@ const btcTestnetHttpClient = new HttpHelper({
 const btcTestnetBlockchainApi = new BTCBlockchainAPI({ httpClient: btcTestnetHttpClient })
 const btcKeyRepositoryTestnet = new BTCKeyRepository({ keyToMnemonic }) // default network is testnet
 
-const btcSegWitTestnetBasePath = "m/84'/1'/0'"
+const btcSegWitTestnetBasePath = "m/84'/0'/0'"
 // const btcLegacyTestnetBasePath = "m/44'/1'/0'"
 // -> m/44'/1'/0'/1/1 + m/44'/1'/0'/0/3 HAS 0.00002 BTC
 

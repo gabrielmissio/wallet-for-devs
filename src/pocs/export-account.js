@@ -8,7 +8,7 @@ const keyName = 'any-key-alias'
 const keyToMnemonic = new Map()
 keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 
-const btcSegWitTestnetBasePath = "m/84'/1'/0'"
+const btcSegWitTestnetBasePath = "m/84'/0'/0'"
 
 const exportAccountUseCase = new ExportAccountUseCase({
   keyRepository: new BTCKeyRepository({ keyToMnemonic })

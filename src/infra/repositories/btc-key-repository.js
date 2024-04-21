@@ -1,5 +1,7 @@
 const { BIP32Factory } = require('bip32')
 const bitcoin = require('bitcoinjs-lib')
+const { ECPairFactory } = require('ecpair')
+const tinysecp = require('tiny-secp256k1')
 const bs58check = require('bs58check')
 const ecc = require('tiny-secp256k1')
 const bip32 = BIP32Factory(ecc)
@@ -7,6 +9,7 @@ const { ethers } = require('ethers')
 
 const { mnemonicToSeed } = require('../helpers/key-helper')
 
+const ECPair = ECPairFactory(tinysecp)
 const defaultNetwork = 'testnet'
 
 module.exports = class BTCKeyRepository {
@@ -89,7 +92,34 @@ module.exports = class BTCKeyRepository {
     return result
   }
 
-  logInfo ({ keyName, path }) {
+  async signTransaction ({ keyName, psbt }) {
+    const wallet = this.loadMasterKey(keyName)
+
+    // move to strategy
+    const keySignerMap = new Map()
+    // Avoid creating derived keys for the same path multiple times
+
+    for (const [index, input] of psbt.data.inputs.entries()) {
+      const { path } = input.bip32Derivation[0]
+      console.log({ path })
+      const signKeyName = `${keyName}-${path}`
+
+      let signer = keySignerMap.get(signKeyName)
+      if (!signer) {
+        const privKey = wallet.derivePath(path).privateKey
+        signer = ECPair.fromPrivateKey(privKey, { network: bitcoin.networks[this.network] })
+        console.log({ signer })
+        keySignerMap.set(signKeyName, signer)
+      }
+      await psbt.signInputAsync(index, signer)
+    }
+
+    const signedTx = psbt.toHex()
+
+    return { signedTx }
+  }
+
+  logInfo ({ keyName }) {
     const wallet = this.loadMasterKey(keyName)
     const master = wallet // wallet.derivePath(path)
 
