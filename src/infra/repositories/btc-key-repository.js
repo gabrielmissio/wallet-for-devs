@@ -3,6 +3,7 @@ const bitcoin = require('bitcoinjs-lib')
 const bs58check = require('bs58check')
 const ecc = require('tiny-secp256k1')
 const bip32 = BIP32Factory(ecc)
+const { ethers } = require('ethers')
 
 const { mnemonicToSeed } = require('../helpers/key-helper')
 
@@ -64,17 +65,55 @@ module.exports = class BTCKeyRepository {
 
     const xPubKey = node.neutered().toBase58()
     const converted = convertXKey(xPubKey, outputFormat)
+    console.log({ xPubKey, converted })
 
-    const masterPublicKey = node.publicKey
+    const masterPublicKey = wallet.publicKey
     const masterFingerprint = bitcoin.crypto.hash160(masterPublicKey).slice(0, 4)
+    const masterFingerprint2 = ethers.ripemd160(ethers.sha256(masterPublicKey))
+      .replace('0x', '')
+      .slice(0, 8)
+
+    console.log({
+      masterFingerprint,
+      masterFingerprint2,
+      masterFingerprintHex: masterFingerprint.toString('hex'),
+      masterFingerprint2Hex: masterFingerprint2.toString('hex')
+    })
 
     const result = {
       protocol,
-      publicKey: converted,
-      fingerprint: masterFingerprint.toString('hex')
+      publicKey: xPubKey,
+      masterFingerprint: masterFingerprint2
     }
 
     return result
+  }
+
+  logInfo ({ keyName, path }) {
+    const wallet = this.loadMasterKey(keyName)
+    const master = wallet // wallet.derivePath(path)
+
+    // Get BIP32 extended private key
+    const xprivMaster = master.toBase58()
+    const privKeyMaster = master.privateKey.toString('hex')
+    // Get private key WIF
+    const wifMaster = master.toWIF()
+    // Get BIP32 extended master public key
+    const xpubMaster = master.neutered().toBase58()
+    // Get master public key
+    const pubKeyMaster = master.publicKey.toString('hex')
+    // Get master public key fingerprint
+    const pubKeyFingerprintMaster = bitcoin.crypto.hash160(master.publicKey).slice(0, 4).toString('hex')
+    console.log(`${Object.keys(wallet)}`, pubKeyFingerprintMaster)
+
+    return {
+      xprivMaster: `${xprivMaster}`,
+      privKeyMaster: `${privKeyMaster}`,
+      wifMaster: `${wifMaster}`,
+      xpubMaster: `${xpubMaster}`,
+      pubKeyMaster: `${pubKeyMaster}`,
+      pubKeyFingerprintMaster: `${pubKeyFingerprintMaster}`
+    }
   }
 }
 
