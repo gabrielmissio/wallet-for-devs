@@ -34,23 +34,10 @@ module.exports = class BTCKeyRepository {
     const wallet = this.loadMasterKey(keyName)
     const node = wallet.derivePath(path)
 
-    const btcAddress = bitcoin.payments.p2wpkh({
-      pubkey: node.publicKey,
-      network: bitcoin.networks[this.network]
-    }).address
+    const protocol = getProtocol(path)
+    const format = protocol === 'btc_segwit' ? 'p2wpkh' : 'p2pkh'
 
-    return {
-      privateKey: node.privateKey,
-      publicKey: node.publicKey,
-      address: btcAddress
-    }
-  }
-
-  getLegacyKeyPair ({ keyName, path = "m/44'/0'/0'/0/0" }) {
-    const wallet = this.loadMasterKey(keyName)
-    const node = wallet.derivePath(path)
-
-    const btcAddress = bitcoin.payments.p2pkh({
+    const btcAddress = bitcoin.payments[format]({
       pubkey: node.publicKey,
       network: bitcoin.networks[this.network]
     }).address
@@ -63,10 +50,9 @@ module.exports = class BTCKeyRepository {
   }
 
   exportReadOnlyKey ({ keyName, path = "m/84'/0'/0'" }) {
-    console.log({ keyName, path })
-    // get procol by proposal path(84 btc_segwit, 44 btc legacy)
     let outputFormat
-    const protocol = path.split('/')[1] === "84'" ? 'btc_segwit' : 'btc_legacy'
+    const protocol = getProtocol(path)
+
     if (protocol === 'btc_segwit') {
       outputFormat = this.network === 'bitcoin' ? 'zpub' : 'vpub'
     } else {
@@ -77,10 +63,7 @@ module.exports = class BTCKeyRepository {
     const node = wallet.derivePath(path)
 
     const xPubKey = node.neutered().toBase58()
-    console.log({ xPubKey })
-
     const converted = convertXKey(xPubKey, outputFormat)
-    console.log({ converted })
 
     const masterPublicKey = node.publicKey
     const masterFingerprint = bitcoin.crypto.hash160(masterPublicKey).slice(0, 4)
@@ -91,9 +74,12 @@ module.exports = class BTCKeyRepository {
       fingerprint: masterFingerprint.toString('hex')
     }
 
-    console.log(result)
     return result
   }
+}
+
+function getProtocol (path) {
+  return path.split('/')[1] === "84'" ? 'btc_segwit' : 'btc_legacy'
 }
 
 function convertXKey (xpub, target) {
