@@ -26,7 +26,8 @@ module.exports = class BTCSegWitSignStrategy {
       await psbt.signInputAsync(index, signer)
     }
 
-    const signedTx = psbt.toHex()
+    psbt.finalizeAllInputs()
+    const signedTx = psbt.extractTransaction().toHex()
 
     return {
       publicKey,

@@ -10,4 +10,14 @@ module.exports = class BTCBlockchainAPI {
 
     return transactions
   }
+
+  async broadcastTransaction (signedTx) {
+    const endpoint = 'tx'
+    const txId = await this.httpClient.fetch(endpoint, {
+      method: 'POST',
+      body: signedTx
+    })
+
+    return txId
+  }
 }
