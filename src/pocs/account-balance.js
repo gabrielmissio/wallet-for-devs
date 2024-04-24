@@ -13,7 +13,10 @@ const accountBalanceUseCase = makeBTCTestnetUseCase({ gapLimit: 5 })
 accountBalanceUseCase.discoverAccountBalance({
   keyName,
   basePath: btcLegacyTestnetBasePath
-}).then(console.log)
+}).then(({ balances, totalBalance }) => {
+  console.table(balances)
+  console.log(`total balance: ${totalBalance}`)
+})
 
 function makeBTCTestnetUseCase ({ gapLimit = 5 }) {
   const BTCBlockchainAPI = require('../infra/apis/btc-blockchain-api')

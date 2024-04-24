@@ -12,7 +12,6 @@ module.exports = class BTCBlockchainAPI {
   }
 
   async getBalance (address) {
-    console.log(`starting a new request at ${new Date()} to get balance for address ${address}`)
     const endpoint = `address/${address}/utxo`
     const utxos = await this.httpClient.fetch(endpoint)
     const balance = utxos.reduce((acc, { value }) => acc + value, 0)

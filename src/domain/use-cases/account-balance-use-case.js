@@ -4,7 +4,7 @@ module.exports = class AccountBalanceUseCase {
     this.keyRepository = keyRepository
     this.gapLimit = gapLimit
 
-    // TODO: review you really need this
+    // TODO: review if you really need this
     this.usedAddresses = new Map()
   }
 
@@ -30,17 +30,23 @@ module.exports = class AccountBalanceUseCase {
         if (this.usedAddresses.has(paymentAddress)) {
           console.log(`address ${paymentAddress} already checked, skipping...`)
           consecutiveEmptyAddresses = 0 // Reset on finding a used address
-          promises.push(this.blockchainAPI.getBalance(paymentAddress))
+          promises.push(
+            this.blockchainAPI.getBalance(paymentAddress).then(({ balance }) => ({ address: paymentAddress, path: paymentPath, balance }))
+          )
         } else {
           const transactions = await this.blockchainAPI.getTransactions(paymentAddress)
           console.log(`address ${paymentAddress} has ${transactions?.length} transactions`)
           if (transactions?.length > 0) {
             this.usedAddresses.set(paymentAddress, transactions)
             consecutiveEmptyAddresses = 0 // Reset on finding a used address
-            promises.push(this.blockchainAPI.getBalance(paymentAddress))
+            promises.push(
+              this.blockchainAPI.getBalance(paymentAddress).then(({ balance }) => ({ address: paymentAddress, path: paymentPath, balance }))
+            )
           } else {
             consecutiveEmptyAddresses++
-            promises.push(Promise.resolve({ balance: 0 }))
+            promises.push(
+              Promise.resolve({ address: paymentAddress, path: paymentPath, balance: 0 })
+            )
           }
         }
       }
@@ -51,16 +57,22 @@ module.exports = class AccountBalanceUseCase {
         const { address: changeAddress } = this.keyRepository.getKeyPair({ keyName, path: changePath })
         if (this.usedAddresses.has(changeAddress)) {
           console.log(`address ${changeAddress} already checked, skipping...`)
-          promises.push(this.blockchainAPI.getBalance(changeAddress))
+          promises.push(
+            this.blockchainAPI.getBalance(changeAddress).then(({ balance }) => ({ address: changeAddress, path: changePath, balance }))
+          )
         } else {
           const transactions = await this.blockchainAPI.getTransactions(changeAddress)
           console.log(`address ${changeAddress} has ${transactions?.length} transactions`)
           if (transactions?.length > 0) {
             this.usedAddresses.set(changeAddress, transactions)
-            promises.push(this.blockchainAPI.getBalance(changeAddress))
+            promises.push(
+              this.blockchainAPI.getBalance(changeAddress).then(({ balance }) => ({ address: changeAddress, path: changePath, balance }))
+            )
           } else {
             changeAccountFound = true
-            promises.push(Promise.resolve({ balance: 0 }))
+            promises.push(
+              Promise.resolve({ address: changeAddress, path: changePath, balance: 0 })
+            )
           }
         }
       }
