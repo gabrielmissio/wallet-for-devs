@@ -19,6 +19,13 @@ module.exports = class BTCBlockchainAPI {
     return { balance }
   }
 
+  async getUTXOs (address) {
+    const endpoint = `address/${address}/utxo`
+    const utxos = await this.httpClient.fetch(endpoint)
+
+    return utxos
+  }
+
   async broadcastTransaction (signedTx) {
     const endpoint = 'tx'
     const txId = await this.httpClient.fetch(endpoint, {
