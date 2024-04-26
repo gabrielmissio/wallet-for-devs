@@ -92,6 +92,17 @@ module.exports = class BTCKeyRepository {
     return result
   }
 
+  getMasterFingerprint ({ keyName }) {
+    const wallet = this.loadMasterKey(keyName)
+
+    const masterPublicKey = wallet.publicKey
+    const masterFingerprint2 = ethers.ripemd160(ethers.sha256(masterPublicKey))
+      .replace('0x', '')
+      .slice(0, 8)
+
+    return masterFingerprint2
+  }
+
   getSigner ({ keyName, path }) {
     const wallet = this.loadMasterKey(keyName)
     const privKey = wallet.derivePath(path).privateKey

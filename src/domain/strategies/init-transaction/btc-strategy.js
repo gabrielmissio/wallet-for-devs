@@ -72,6 +72,7 @@ module.exports = class BTCInitTxStrategy {
         },
         bip32Derivation: [
           {
+            masterFingerprint: utxo.masterFingerprint,
             pubkey: utxo.publicKey,
             path: utxo.path
           }
@@ -198,12 +199,16 @@ module.exports = class BTCInitTxStrategy {
     console.log(`total balance found: ${utxos.length}`)
     console.log({ utxos })
 
+    const masterFingerprint = this.keyRepository.getMasterFingerprint({ keyName })
+
     const customUTXOs = utxos.map(({ address, path, publicKey, utxos }) => {
       return utxos.map(utxo => {
         return {
           address,
           path,
           publicKey,
+          // masterFingerprint,
+          masterFingerprint: Buffer.from(masterFingerprint, 'hex'),
           ...utxo
         }
       })
