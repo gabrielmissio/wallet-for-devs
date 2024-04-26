@@ -5,24 +5,25 @@ const keyName = 'any-key-alias'
 const keyToMnemonic = new Map()
 keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 
-// const btcSegWitTestnetBasePath = "m/84'/1'/0'"
+const btcSegWitTestnetBasePath = "m/84'/1'/0'"
 // const btcLegacyTestnetBasePath = "m/84'/1'/0'"
 
 const initTxStrategy = makeBTCTestnetUseCase()
 
-initTxStrategy.selectUTXOs(Number(process.env.TX_VALUE), process.env.TX_FROM)
-  .then(({ selectedUTXOs, fee }) => {
+initTxStrategy.discoverUTXOs({ keyName, basePath: btcSegWitTestnetBasePath })
+  .then((utxos) => {
+    const { selectedUTXOs, fee } = initTxStrategy.selectUTXOs(Number(process.env.TX_VALUE), utxos)
     console.log({ fee })
     console.log({ selectedUTXOs })
 
-    initTxStrategy.createLegacyPSBT({
+    const result = initTxStrategy.createSegwitPSBT({
       amount: Number(process.env.TX_VALUE),
       changeAddress: process.env.TX_FROM, // temporary
       recipientAddress: process.env.TX_TO,
       selectedUTXOs
-    }).then((result) => {
-      console.log(result)
     })
+
+    console.log(result.toHex())
   })
 
 function makeBTCTestnetUseCase () {
