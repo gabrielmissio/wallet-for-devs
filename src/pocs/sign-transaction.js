@@ -1,6 +1,6 @@
 require('dotenv').config()
 const qrcode = require('qrcode-terminal')
-const SignTransactionUseCase = require('../domain/use-cases/sign-transaction-use-case')
+const SignTransactionUseCase = require('../core/src/domain/use-cases/sign-transaction-use-case')
 
 const keyName = 'any-key-alias'
 const keyToMnemonic = new Map()
@@ -40,8 +40,8 @@ function makeComponents (option) {
 }
 
 function makeBTCSegWitTestnetUseCase () {
-  const BTCSegWitSignTransactionStrategy = require('../domain/strategies/sign-transaction/btc-segwit-strategy')
-  const BTCKeyRepository = require('../infra/repositories/btc-key-repository')
+  const BTCSegWitSignTransactionStrategy = require('../core/src/domain/strategies/sign-transaction/btc-segwit-strategy')
+  const BTCKeyRepository = require('../core/src/infra/repositories/btc-key-repository')
 
   const btcSegWitSignStrategy = new BTCSegWitSignTransactionStrategy({
     keyRepository: new BTCKeyRepository({ keyToMnemonic })
@@ -53,8 +53,8 @@ function makeBTCSegWitTestnetUseCase () {
 }
 
 function makeBTCLegacyTestnetUseCase () {
-  const BTCLegacySignTransactionStrategy = require('../domain/strategies/sign-transaction/btc-legacy-strategy')
-  const BTCKeyRepository = require('../infra/repositories/btc-key-repository')
+  const BTCLegacySignTransactionStrategy = require('../core/src/domain/strategies/sign-transaction/btc-legacy-strategy')
+  const BTCKeyRepository = require('../core/src/infra/repositories/btc-key-repository')
 
   const btcSegWitSignStrategy = new BTCLegacySignTransactionStrategy({
     keyRepository: new BTCKeyRepository({ keyToMnemonic })

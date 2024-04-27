@@ -1,5 +1,5 @@
 require('dotenv').config()
-const AddressDiscoveryUseCase = require('../domain/use-cases/address-discovery-use-case')
+const AddressDiscoveryUseCase = require('../core/src/domain/use-cases/address-discovery-use-case')
 
 const keyName = 'any-key-alias'
 const keyToMnemonic = new Map()
@@ -23,9 +23,9 @@ addressDiscoveryUseCase.discoverChangeAddress({
 */
 
 function makeBTCTestnetUseCase ({ gapLimit = 5 }) {
-  const BTCBlockchainAPI = require('../infra/apis/btc-blockchain-api')
-  const HttpHelper = require('../infra/helpers/http-helper')
-  const BTCKeyRepository = require('../infra/repositories/btc-key-repository')
+  const BTCBlockchainAPI = require('../core/src/infra/apis/btc-blockchain-api')
+  const HttpHelper = require('../core/src/infra/helpers/http-helper')
+  const BTCKeyRepository = require('../core/src/infra/repositories/btc-key-repository')
 
   const btcTestnetHttpClient = new HttpHelper({
     baseURL: process.env.BTC_TESTNET_BLOCKCHAIN_API_URL,
