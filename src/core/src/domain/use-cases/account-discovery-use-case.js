@@ -27,7 +27,7 @@ module.exports = class AccountDiscoveryUseCase {
 
     return {
       index: accountIndex,
-      accountPath: `${basePath}/${accountIndex}'`
+      derivationPath: `${basePath}/${accountIndex}'`
     }
   }
 
