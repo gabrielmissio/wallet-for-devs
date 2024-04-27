@@ -29,11 +29,13 @@ module.exports = class BTCInitTxStrategy {
 
   createLegacyPSBT ({ recipientAddress, amount, selectedUTXOs, changeAddress }) {
     const psbt = new bitcoin.Psbt({ network: this.network })
-    selectedUTXOs.forEach(utxo => {
+    selectedUTXOs.forEach(async utxo => {
+      const txHex = await this.blockchainAPI.getHexTx(utxo.txid)
+
       psbt.addInput({
-        hash: utxo.txId,
+        hash: utxo.txid,
         index: utxo.vout,
-        nonWitnessUtxo: Buffer.from(utxo.rawTransaction, 'hex')
+        nonWitnessUtxo: Buffer.from(txHex, 'hex')
       })
     })
 
