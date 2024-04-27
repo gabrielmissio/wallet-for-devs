@@ -8,6 +8,8 @@ module.exports = class BTCLegacySignStrategy {
 
   // TODO: validate inputs and change address
   async signTransaction ({ keyName, path: basePath, payload }) {
+    const psbt1 = Psbt.fromHex(payload, { network: this.network })
+    console.log('psbt1', psbt1)
     const psbt = new Psbt({ network: this.network })
     const { publicKey } = this.keyRepository.exportReadOnlyKey({ keyName, path: basePath })
 

@@ -6,7 +6,7 @@ const keyToMnemonic = new Map()
 keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 
 // const btcSegWitTestnetBasePath = "m/84'/1'/0'"
-const btcLegacyTestnetBasePath = "m/44'/1'/0'"
+const btcLegacyTestnetBasePath = "m/84'/1'/0'"
 
 const addressDiscoveryUseCase = makeBTCTestnetUseCase({ gapLimit: 5 })
 
