@@ -206,7 +206,7 @@ module.exports = class BTCInitTxStrategy {
         if (this.usedAddresses.has(changeAddress)) {
           console.log(`address ${changeAddress} already checked, skipping...`)
           promises.push(
-            this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: paymentPath, publicKey, utxos }))
+            this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: changePath, publicKey, utxos }))
           )
         } else {
           const transactions = await this.blockchainAPI.getTransactions(changeAddress)
@@ -214,7 +214,7 @@ module.exports = class BTCInitTxStrategy {
           if (transactions?.length > 0) {
             this.usedAddresses.set(changeAddress, transactions)
             promises.push(
-              this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: paymentPath, publicKey, utxos }))
+              this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: changePath, publicKey, utxos }))
             )
           } else {
             changeAccountFound = true
