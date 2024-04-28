@@ -20,10 +20,12 @@ module.exports = class BTCInitTxStrategy {
 
   // TODO: refactor
   // Currently, this is a "minimal to make it work" implementation
-  async initTransaction ({ keyName, basePath, recipient, amount }) {
+  async initTransaction ({ keyName, basePath, recipient, amount, customChangeAddress }) {
     const utxos = await this.discoverUTXOs({ keyName, basePath })
     const { selectedUTXOs, fee } = this.selectUTXOs(amount, utxos)
-    const changeAddress = await this.getChangeAddress({ keyName, basePath })
+
+    const changeAddress = customChangeAddress ||
+      await this.discoverChangeAddress({ keyName, basePath })
 
     console.log({ fee, selectedUTXOs, changeAddress })
 
@@ -42,11 +44,6 @@ module.exports = class BTCInitTxStrategy {
   calculateFee (numInputs, numOutputs) {
     const txSize = numInputs * 180 + numOutputs * 34 + 10 // rough estimation of transaction size in bytes
     return txSize * this.feePerByte
-  }
-
-  // TODO: implement this method
-  async getChangeAddress () {
-    return process.env.TX_FROM // temporary
   }
 
   // TODO: create "generic shared method name" to use across different strategies
@@ -248,5 +245,40 @@ module.exports = class BTCInitTxStrategy {
     }).flatMap(x => x)
 
     return customUTXOs
+  }
+
+  // TODO: Validate basePath
+  async discoverChangeAddress ({ keyName, basePath }) {
+    let addressIndex = 0
+    let accountFound = false
+    console.log('starting change address discovery')
+
+    while (!accountFound) {
+      // BIP44 standard: m / purpose' / coin_type' / account' / change / address_index
+      // Base path means the first 4 parts of the path (m / purpose' / coin_type' / account')
+      const path = `${basePath}/1/${addressIndex}`
+      console.log(`trying path ${path}`)
+      addressIndex++
+
+      const { address } = this.keyRepository.getKeyPair({ keyName, path })
+      if (this.usedAddresses.has(address)) {
+        console.log(`address ${address} already checked, skipping...`)
+        continue
+      }
+
+      const transactions = await this.blockchainAPI.getTransactions(address)
+      console.log(`address ${address} has ${transactions?.length} transactions`)
+      if (transactions?.length > 0) {
+        this.usedAddresses.set(address, transactions)
+      } else {
+        accountFound = true
+      }
+    }
+
+    console.log(`change address found at address_index ${addressIndex - 1}`)
+    return this.keyRepository.getKeyPair({
+      keyName,
+      path: `${basePath}/1/${addressIndex - 1}`
+    }).address
   }
 }

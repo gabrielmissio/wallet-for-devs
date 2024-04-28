@@ -5,10 +5,8 @@ const BTCKeyRepository = require('../../../../../core/src/infra/repositories/btc
 
 // DOMAIN
 const { initializedWallets } = require('../../domain/services/wallet-service')
-// TODO: review use of above strategies
 const InitTxBTCStrategy = require('../../../../../core/src/domain/strategies/init-transaction/btc-strategy')
 const SignTxBTCStrategy = require('../../../../../core/src/domain/strategies/sign-transaction/btc-segwit-strategy')
-
 const AccountBalanceUseCase = require('../../../../../core/src/domain/use-cases/account-balance-use-case')
 const AccountDiscoveryUseCase = require('../../../../../core/src/domain/use-cases/account-discovery-use-case')
 const AddressDiscoveryUseCase = require('../../../../../core/src/domain/use-cases/address-discovery-use-case')
