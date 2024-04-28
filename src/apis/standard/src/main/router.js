@@ -26,4 +26,6 @@ router.post('/init-transaction', validatorMiddleware(schemas.initTransaction), c
 
 router.post('/sign-transaction', validatorMiddleware(schemas.signTransaction), controller.signTransaction)
 
+router.post('/simple-send-transaction', validatorMiddleware(schemas.simpleSendTransaction), controller.simpleSendTransaction)
+
 module.exports = router

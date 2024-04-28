@@ -163,10 +163,32 @@ async function broadcastTransaction (req, res) {
   }
 }
 
-async function simpleTransaction (req, res) {
+async function simpleSendTransaction (req, res) {
   try {
-    return res.status(200).json({ })
+    const { protocol, useTestnet, ...txData } = req.body
+    const walletId = req.headers['x-wallet-id']
+    const account = req.headers['x-account-id']
+
+    const basePath = getDerivationPath({
+      protocol, account, useTestnet
+    })
+    const { unsignedTx } = await useCaseFactory.makeUseCase({
+      useCase: 'init-transaction', protocol, useTestnet
+    }).initTransaction({
+      keyName: walletId, basePath, ...txData
+    })
+    const { signedTx } = await useCaseFactory.makeUseCase({
+      useCase: 'sign-transaction', protocol, useTestnet
+    }).signTransaction({
+      keyName: walletId, basePath, payload: unsignedTx
+    })
+    const result = await useCaseFactory.makeUseCase({
+      useCase: 'broadcast-transaction', protocol, useTestnet
+    }).broadcastTransaction({ signedTx })
+
+    return res.status(200).json(result)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
@@ -191,5 +213,5 @@ module.exports = {
   initTransaction,
   signTransaction,
   broadcastTransaction,
-  simpleTransaction
+  simpleSendTransaction
 }

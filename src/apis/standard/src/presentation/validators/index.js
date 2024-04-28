@@ -84,7 +84,7 @@ exports.broadcastTransaction = Joi.object({
   }).required()
 }).unknown()
 
-exports.simpleTransaction = Joi.object({
+exports.simpleSendTransaction = Joi.object({
   body: Joi.object({
     protocol: Joi.string().valid(...allowedProtocols).required(),
     useTestnet: Joi.boolean().default(true),
