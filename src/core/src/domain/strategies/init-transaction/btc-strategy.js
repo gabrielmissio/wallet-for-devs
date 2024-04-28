@@ -129,7 +129,8 @@ module.exports = class BTCInitTxStrategy {
   }
 
   selectUTXOs (totalAmount, utxos) {
-    utxos.sort((a, b) => b.amount - a.amount)
+    // TODO: filter utxos to avoid "dust inputs"
+    utxos.sort((a, b) => b.value - a.value)
 
     const selectedUTXOs = []
     let selectedAmount = 0
@@ -137,7 +138,7 @@ module.exports = class BTCInitTxStrategy {
 
     while (selectedAmount < totalAmount && i < utxos.length) {
       selectedUTXOs.push(utxos[i])
-      selectedAmount += utxos[i].amount
+      selectedAmount += utxos[i].value
       i++
     }
 
@@ -147,7 +148,7 @@ module.exports = class BTCInitTxStrategy {
 
     while (selectedAmount < totalAmount && i < utxos.length) {
       selectedUTXOs.push(utxos[i])
-      selectedAmount += utxos[i].amount
+      selectedAmount += utxos[i].value
       i++
       const newFee = this.calculateFee(selectedUTXOs.length, 2)
       totalAmount = totalAmount - fee + newFee
