@@ -1,7 +1,7 @@
 const qrcode = require('qrcode-terminal')
 
 require('dotenv').config()
-const ExportAccountUseCase = require('../domain/use-cases/export-account-use-case')
+const ExportAccountUseCase = require('../core/src/domain/use-cases/export-account-use-case')
 
 const keyName = 'any-key-alias'
 const keyToMnemonic = new Map()
@@ -19,7 +19,7 @@ exportAccountUseCase.exportReadOnlyAccount({
 })
 
 function makeBTCTestnetUseCase () {
-  const BTCKeyRepository = require('../infra/repositories/btc-key-repository')
+  const BTCKeyRepository = require('../core/src/infra/repositories/btc-key-repository')
 
   return new ExportAccountUseCase({
     keyRepository: new BTCKeyRepository({ keyToMnemonic })

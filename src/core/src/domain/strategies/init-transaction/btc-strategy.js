@@ -18,6 +18,29 @@ module.exports = class BTCInitTxStrategy {
     this.usedAddresses = new Map()
   }
 
+  // TODO: refactor
+  // Currently, this is a "minimal to make it work" implementation
+  async initTransaction ({ keyName, basePath, recipient, amount, customChangeAddress }) {
+    const utxos = await this.discoverUTXOs({ keyName, basePath })
+    const { selectedUTXOs, fee } = this.selectUTXOs(amount, utxos)
+
+    const changeAddress = customChangeAddress ||
+      await this.discoverChangeAddress({ keyName, basePath })
+
+    console.log({ fee, selectedUTXOs, changeAddress })
+
+    const unsignedTx = this.createSegwitPSBT({
+      amount,
+      changeAddress,
+      recipientAddress: recipient,
+      selectedUTXOs
+    })
+
+    return {
+      unsignedTx: unsignedTx.toHex()
+    }
+  }
+
   calculateFee (numInputs, numOutputs) {
     const txSize = numInputs * 180 + numOutputs * 34 + 10 // rough estimation of transaction size in bytes
     return txSize * this.feePerByte
@@ -88,9 +111,14 @@ module.exports = class BTCInitTxStrategy {
       value: amount
     })
 
-    // Change output
-    const change = selectedUTXOs.reduce((sum, utxo) => sum + utxo.amount, 0) - amount - this.calculateFee(selectedUTXOs.length, 2)
+    // Calculate total input amount
+    const totalInput = selectedUTXOs.reduce((sum, utxo) => sum + utxo.value, 0)
+    // Calculate change
+    const fee = this.calculateFee(selectedUTXOs.length, 2)
+    const change = totalInput - amount - fee
+
     if (change > 0) {
+      // Change output
       psbt.addOutput({
         address: changeAddress,
         value: change
@@ -101,7 +129,8 @@ module.exports = class BTCInitTxStrategy {
   }
 
   selectUTXOs (totalAmount, utxos) {
-    utxos.sort((a, b) => b.amount - a.amount)
+    // TODO: filter utxos to avoid "dust inputs"
+    utxos.sort((a, b) => b.value - a.value)
 
     const selectedUTXOs = []
     let selectedAmount = 0
@@ -109,7 +138,7 @@ module.exports = class BTCInitTxStrategy {
 
     while (selectedAmount < totalAmount && i < utxos.length) {
       selectedUTXOs.push(utxos[i])
-      selectedAmount += utxos[i].amount
+      selectedAmount += utxos[i].value
       i++
     }
 
@@ -119,7 +148,7 @@ module.exports = class BTCInitTxStrategy {
 
     while (selectedAmount < totalAmount && i < utxos.length) {
       selectedUTXOs.push(utxos[i])
-      selectedAmount += utxos[i].amount
+      selectedAmount += utxos[i].value
       i++
       const newFee = this.calculateFee(selectedUTXOs.length, 2)
       totalAmount = totalAmount - fee + newFee
@@ -178,7 +207,7 @@ module.exports = class BTCInitTxStrategy {
         if (this.usedAddresses.has(changeAddress)) {
           console.log(`address ${changeAddress} already checked, skipping...`)
           promises.push(
-            this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: paymentPath, publicKey, utxos }))
+            this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: changePath, publicKey, utxos }))
           )
         } else {
           const transactions = await this.blockchainAPI.getTransactions(changeAddress)
@@ -186,7 +215,7 @@ module.exports = class BTCInitTxStrategy {
           if (transactions?.length > 0) {
             this.usedAddresses.set(changeAddress, transactions)
             promises.push(
-              this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: paymentPath, publicKey, utxos }))
+              this.blockchainAPI.getUTXOs(changeAddress).then((utxos) => ({ address: changeAddress, path: changePath, publicKey, utxos }))
             )
           } else {
             changeAccountFound = true
@@ -217,5 +246,40 @@ module.exports = class BTCInitTxStrategy {
     }).flatMap(x => x)
 
     return customUTXOs
+  }
+
+  // TODO: Validate basePath
+  async discoverChangeAddress ({ keyName, basePath }) {
+    let addressIndex = 0
+    let accountFound = false
+    console.log('starting change address discovery')
+
+    while (!accountFound) {
+      // BIP44 standard: m / purpose' / coin_type' / account' / change / address_index
+      // Base path means the first 4 parts of the path (m / purpose' / coin_type' / account')
+      const path = `${basePath}/1/${addressIndex}`
+      console.log(`trying path ${path}`)
+      addressIndex++
+
+      const { address } = this.keyRepository.getKeyPair({ keyName, path })
+      if (this.usedAddresses.has(address)) {
+        console.log(`address ${address} already checked, skipping...`)
+        continue
+      }
+
+      const transactions = await this.blockchainAPI.getTransactions(address)
+      console.log(`address ${address} has ${transactions?.length} transactions`)
+      if (transactions?.length > 0) {
+        this.usedAddresses.set(address, transactions)
+      } else {
+        accountFound = true
+      }
+    }
+
+    console.log(`change address found at address_index ${addressIndex - 1}`)
+    return this.keyRepository.getKeyPair({
+      keyName,
+      path: `${basePath}/1/${addressIndex - 1}`
+    }).address
   }
 }

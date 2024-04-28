@@ -40,6 +40,6 @@ module.exports = class BTCBlockchainAPI {
       body: signedTx
     })
 
-    return txId
+    return { txId }
   }
 }

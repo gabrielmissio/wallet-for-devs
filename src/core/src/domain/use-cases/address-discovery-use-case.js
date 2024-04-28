@@ -43,10 +43,17 @@ module.exports = class AddressDiscoveryUseCase {
     const discoveredAddressIndex = addressIndex - this.gapLimit
     console.log(`payment address found at address_index ${discoveredAddressIndex}`)
 
-    return this.keyRepository.getKeyPair({
+    const derivationPath = `${basePath}/0/${discoveredAddressIndex}`
+    const { address } = this.keyRepository.getKeyPair({
       keyName,
-      path: `${basePath}/0/${discoveredAddressIndex}`
+      path: derivationPath
     })
+
+    return {
+      index: discoveredAddressIndex,
+      derivationPath,
+      address
+    }
   }
 
   // TODO: Validate basePath

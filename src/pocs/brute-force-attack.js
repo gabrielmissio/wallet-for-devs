@@ -1,11 +1,11 @@
 const fs = require('fs')
 require('dotenv').config()
 
-const { generateMnemonic } = require('../infra/helpers/key-helper')
-const AccountDiscoveryUseCase = require('../domain/use-cases/account-discovery-use-case')
-const BTCBlockchainAPI = require('../infra/apis/btc-blockchain-api')
-const HttpHelper = require('../infra/helpers/http-helper')
-const BTCKeyRepository = require('../infra/repositories/btc-key-repository')
+const { generateMnemonic } = require('../core/src/infra/helpers/key-helper')
+const AccountDiscoveryUseCase = require('../core/src/domain/use-cases/account-discovery-use-case')
+const BTCBlockchainAPI = require('../core/src/infra/apis/btc-blockchain-api')
+const HttpHelper = require('../core/src/infra/helpers/http-helper')
+const BTCKeyRepository = require('../core/src/infra/repositories/btc-key-repository')
 
 const keyToMnemonic = new Map()
 const btcSegWitTestnetBasePath = "m/84'/0'/0'/0"
