@@ -12,6 +12,7 @@ async function startWallet (req, res) {
 
     return res.status(200).json({ message: 'WALLET_INITIALIZED' })
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
@@ -28,6 +29,7 @@ async function stopWallet (req, res) {
 
     return res.status(200).json({ message: 'WALLET_STOPPED' })
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
@@ -72,6 +74,7 @@ async function discoverNextPaymentAddress (req, res) {
 
     return res.status(200).json(result)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
@@ -94,18 +97,17 @@ async function discoverAccountBalance (req, res) {
 
     return res.status(200).json(result)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
 
 async function initTransaction (req, res) {
   try {
-    /*
-    const { protocol, useTestnet } = req.query
+    const { protocol, useTestnet, ...txData } = req.body
     const walletId = req.headers['x-wallet-id']
     const account = req.headers['x-account-id']
 
-    // refactor, currently the "usecase" is actually the "strategy"
     const basePath = getDerivationPath({
       protocol, account, useTestnet
     })
@@ -113,26 +115,49 @@ async function initTransaction (req, res) {
       useCase: 'init-transaction', protocol, useTestnet
     })
     const result = await useCase.initTransaction({
-      keyName: walletId, basePath
-    }) */
+      keyName: walletId, basePath, ...txData
+    })
 
-    return res.status(200).json({ })
+    return res.status(200).json(result)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
 
 async function signTransaction (req, res) {
   try {
-    return res.status(200).json({ })
+    const { protocol, useTestnet, unsignedTx } = req.body
+    const walletId = req.headers['x-wallet-id']
+    const account = req.headers['x-account-id']
+
+    const basePath = getDerivationPath({
+      protocol, account, useTestnet
+    })
+    const useCase = useCaseFactory.makeUseCase({
+      useCase: 'sign-transaction', protocol, useTestnet
+    })
+    const result = await useCase.signTransaction({
+      keyName: walletId, basePath, payload: unsignedTx
+    })
+
+    return res.status(200).json(result)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }
 }
 
 async function broadcastTransaction (req, res) {
   try {
-    return res.status(200).json({ })
+    const { protocol, useTestnet, signedTx } = req.body
+
+    const useCase = useCaseFactory.makeUseCase({
+      useCase: 'broadcast-transaction', protocol, useTestnet
+    })
+    const result = await useCase.broadcastTransaction({ signedTx })
+
+    return res.status(200).json(result)
   } catch (error) {
     return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' })
   }

@@ -10,7 +10,7 @@ const btcLegacyTestnetBasePath = "m/84'/1'/0'"
 
 const addressDiscoveryUseCase = makeBTCTestnetUseCase({ gapLimit: 5 })
 
-addressDiscoveryUseCase.discoverPaymentAddress({
+addressDiscoveryUseCase.discoverChangeAddress({
   keyName,
   basePath: btcLegacyTestnetBasePath
 }).then(console.log)

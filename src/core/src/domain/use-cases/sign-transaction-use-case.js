@@ -6,10 +6,15 @@ module.exports = class SignTransactionUseCase {
     this.protocolStrategy = protocolStrategy
   }
 
-  async signTransaction ({ keyName, path, payload }) {
+  async signTransaction ({ keyName, basePath: path, payload }) {
     const { signedTx, publicKey, ...custom } = await this.protocolStrategy.signTransaction({ keyName, path, payload })
 
-    return this.broadcastStrategy.broadcastTransaction({ signedTx, publicKey, path, ...custom })
+    const broadcastData = await this.broadcastStrategy.broadcastTransaction({ signedTx, publicKey, path, ...custom })
+
+    return {
+      signedTx,
+      ...broadcastData
+    }
   }
 }
 

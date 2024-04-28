@@ -10,7 +10,7 @@ keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 const { signTxUseCase, basePath, payload } = makeComponents('btcSegWitTestnet')
 
 signTxUseCase.signTransaction({
-  keyName, path: basePath, payload
+  keyName, basePath, payload
 }).then((data) => {
   qrcode.generate(data.qrCodeData, { small: true })
   console.log(data.qrCodeData)

@@ -68,7 +68,7 @@ exports.signTransaction = Joi.object({
   body: Joi.object({
     protocol: Joi.string().valid(...allowedProtocols).required(),
     useTestnet: Joi.boolean().default(true),
-    rawTransaction: Joi.string().required()
+    unsignedTx: Joi.string().required()
   }).required(),
   headers: Joi.object({
     'x-wallet-id': Joi.string().required(),
@@ -80,7 +80,7 @@ exports.broadcastTransaction = Joi.object({
   body: Joi.object({
     protocol: Joi.string().valid(...allowedProtocols).required(),
     useTestnet: Joi.boolean().default(true),
-    signedRawTransaction: Joi.string().required()
+    signedTx: Joi.string().required()
   }).required()
 }).unknown()
 

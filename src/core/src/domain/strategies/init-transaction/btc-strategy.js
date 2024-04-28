@@ -18,9 +18,35 @@ module.exports = class BTCInitTxStrategy {
     this.usedAddresses = new Map()
   }
 
+  // TODO: refactor
+  // Currently, this is a "minimal to make it work" implementation
+  async initTransaction ({ keyName, basePath, recipient, amount }) {
+    const utxos = await this.discoverUTXOs({ keyName, basePath })
+    const { selectedUTXOs, fee } = this.selectUTXOs(amount, utxos)
+    const changeAddress = await this.getChangeAddress({ keyName, basePath })
+
+    console.log({ fee, selectedUTXOs, changeAddress })
+
+    const unsignedTx = this.createSegwitPSBT({
+      amount,
+      changeAddress,
+      recipientAddress: recipient,
+      selectedUTXOs
+    })
+
+    return {
+      unsignedTx: unsignedTx.toHex()
+    }
+  }
+
   calculateFee (numInputs, numOutputs) {
     const txSize = numInputs * 180 + numOutputs * 34 + 10 // rough estimation of transaction size in bytes
     return txSize * this.feePerByte
+  }
+
+  // TODO: implement this method
+  async getChangeAddress () {
+    return process.env.TX_FROM // temporary
   }
 
   // TODO: create "generic shared method name" to use across different strategies
