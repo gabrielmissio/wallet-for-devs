@@ -114,9 +114,14 @@ module.exports = class BTCInitTxStrategy {
       value: amount
     })
 
-    // Change output
-    const change = selectedUTXOs.reduce((sum, utxo) => sum + utxo.amount, 0) - amount - this.calculateFee(selectedUTXOs.length, 2)
+    // Calculate total input amount
+    const totalInput = selectedUTXOs.reduce((sum, utxo) => sum + utxo.value, 0)
+    // Calculate change
+    const fee = this.calculateFee(selectedUTXOs.length, 2)
+    const change = totalInput - amount - fee
+
     if (change > 0) {
+      // Change output
       psbt.addOutput({
         address: changeAddress,
         value: change
