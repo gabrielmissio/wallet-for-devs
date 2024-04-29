@@ -6,14 +6,14 @@ module.exports = class BTCBlockchainAPI {
 
   async getTransactions (address) {
     const endpoint = `address/${address}/txs`
-    const transactions = await this.httpClient.fetch(endpoint)
+    const { body: transactions } = await this.httpClient.fetch(endpoint)
 
     return transactions
   }
 
   async getBalance (address) {
     const endpoint = `address/${address}/utxo`
-    const utxos = await this.httpClient.fetch(endpoint)
+    const { body: utxos } = await this.httpClient.fetch(endpoint)
     const balance = utxos.reduce((acc, { value }) => acc + value, 0)
 
     return { balance }
@@ -21,21 +21,21 @@ module.exports = class BTCBlockchainAPI {
 
   async getHexTx (txId) {
     const endpoint = `tx/${txId}/hex`
-    const hexTx = await this.httpClient.fetch(endpoint)
+    const { body: hexTx } = await this.httpClient.fetch(endpoint)
 
     return hexTx
   }
 
   async getUTXOs (address) {
     const endpoint = `address/${address}/utxo`
-    const utxos = await this.httpClient.fetch(endpoint)
+    const { body: utxos } = await this.httpClient.fetch(endpoint)
 
     return utxos
   }
 
   async broadcastTransaction (signedTx) {
     const endpoint = 'tx'
-    const txId = await this.httpClient.fetch(endpoint, {
+    const { body: txId } = await this.httpClient.fetch(endpoint, {
       method: 'POST',
       body: signedTx
     })

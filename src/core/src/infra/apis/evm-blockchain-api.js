@@ -31,7 +31,7 @@ module.exports = class EVMBlockchainAPI {
     console.log(fetchResult.status)
 
     if (fetchResult.status !== 200) {
-      throw new Error('Error fetching transactions')
+      throw new Error('Error fetching balance')
     }
 
     const balance = fetchResult.body.result / 1e18
