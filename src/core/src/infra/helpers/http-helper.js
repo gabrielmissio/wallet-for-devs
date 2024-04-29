@@ -46,6 +46,9 @@ module.exports = class HttpHelper {
       result = await data.text()
     }
 
-    return result
+    return {
+      status: data.status,
+      body: result
+    }
   }
 }

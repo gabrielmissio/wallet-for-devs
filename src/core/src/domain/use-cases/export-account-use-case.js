@@ -7,7 +7,6 @@ module.exports = class ExportAccountUseCase {
   }
 
   async exportReadOnlyAccount ({ keyName, path }) {
-    console.log(this.keyRepository.logInfo({ keyName, path }))
     const { publicKey, ...custom } = this.keyRepository.exportReadOnlyKey({ keyName, path })
 
     return this.exportStrategy.exportAccount({ ...custom, publicKey, path })

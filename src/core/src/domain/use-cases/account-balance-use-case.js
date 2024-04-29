@@ -10,13 +10,13 @@ module.exports = class AccountBalanceUseCase {
 
   // BIP44 standard: m / purpose' / coin_type' / account' / change / address_index
   // Base path means the first 4 parts of the path (m / purpose' / coin_type' / account')
-  async discoverAccountBalance ({ keyName, basePath }) {
+  async discoverAccountBalance ({ keyName, basePath, useChangePath = true }) {
     const promises = []
     let addressIndex = 0
     let consecutiveEmptyAddresses = 0
     console.log('starting account balance discovery')
 
-    let changeAccountFound = false
+    let changeAccountFound = !useChangePath // if useChangePath is false, we don't need to find a change account
 
     while (consecutiveEmptyAddresses < this.gapLimit || !changeAccountFound) {
       const paymentPath = `${basePath}/0/${addressIndex}`

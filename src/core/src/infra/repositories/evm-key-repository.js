@@ -9,7 +9,7 @@ module.exports = class EVMKeyRepository {
     }
   }
 
-  getKeyPair ({ keyName, password = '', path = "m/44'/0'/0'/0/0" }) {
+  getKeyPair ({ keyName, password = '', path = "m/44'/60'/0'/0/0" }) {
     if (!this.keyToMnemonic.has(keyName)) {
       throw new Error('Key not found')
     }
@@ -21,6 +21,15 @@ module.exports = class EVMKeyRepository {
       privateKey: wallet.privateKey,
       publicKey: wallet.publicKey,
       address: wallet.address
+    }
+  }
+
+  exportReadOnlyKey ({ keyName, password = '', path = "m/84'/0'/0'" }) {
+    const { publicKey } = this.getKeyPair({ keyName, password, path })
+
+    return {
+      protocol: 'eth',
+      publicKey
     }
   }
 }
