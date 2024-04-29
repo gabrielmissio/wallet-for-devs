@@ -5,7 +5,7 @@ module.exports = class AccountDiscoveryUseCase {
     this.gapLimit = gapLimit
   }
 
-  async discoverFirstEmptyAccount ({ keyName, basePath }) {
+  async discoverFirstEmptyAccount ({ keyName, basePath, useChangePath = true }) {
     // BIP44 standard: m / purpose' / coin_type' / account' / change / address_index
     // Base path means the first 3 parts of the path (m / purpose' / coin_type')
     let accountIndex = 0
@@ -16,7 +16,7 @@ module.exports = class AccountDiscoveryUseCase {
       const internalPath = `${basePath}/${accountIndex}'/1` // Path for internal addresses
 
       isEmptyAccount = await this.checkAccountActivity({ keyName, path: externalPath })
-      if (isEmptyAccount) {
+      if (isEmptyAccount && useChangePath) {
         isEmptyAccount = await this.checkAccountActivity({ keyName, path: internalPath })
       }
 

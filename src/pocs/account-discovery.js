@@ -12,7 +12,8 @@ const accountDiscoveryUseCase = makeETHTestnetUseCase({ gapLimit: 5 })
 
 accountDiscoveryUseCase.discoverFirstEmptyAccount({
   keyName,
-  basePath: btcSLegacyTestnetBasePath
+  basePath: btcSLegacyTestnetBasePath,
+  useChangePath: false
 }).then(console.log)
 
 // eslint-disable-next-line no-unused-vars

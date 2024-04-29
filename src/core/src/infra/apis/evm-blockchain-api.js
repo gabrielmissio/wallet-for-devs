@@ -7,16 +7,12 @@ module.exports = class EVMBlockchainAPI {
   async getTransactions (address) {
     const apiKey = process.env.ETHERSCAN_API_KEY
 
-    // TODO: Validate http code and explorer codes
     const fetchResult = await this.httpClient.fetch(
       `/?module=account&action=txlist&address=${address}&apikey=${apiKey}`
     )
-    console.log(fetchResult.status)
-
     if (fetchResult.status !== 200) {
       throw new Error('Error fetching transactions')
     }
-    // check if result is an array
 
     return fetchResult.body.result
   }
@@ -24,12 +20,9 @@ module.exports = class EVMBlockchainAPI {
   async getBalance (address) {
     const apiKey = process.env.ETHERSCAN_API_KEY
 
-    // TODO: Validate http code and explorer codes
     const fetchResult = await this.httpClient.fetch(
       `/?module=account&action=balance&address=${address}&apikey=${apiKey}`
     )
-    console.log(fetchResult.status)
-
     if (fetchResult.status !== 200) {
       throw new Error('Error fetching balance')
     }
