@@ -44,11 +44,11 @@ function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
   const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
 
-  const btcTestnetHttpClient = new HttpHelper({
+  const ethTestnetHttpClient = new HttpHelper({
     baseURL: process.env.ETH_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new EVMBlockchainAPI({ httpClient: btcTestnetHttpClient })
+  const evmTestnetBlockchainApi = new EVMBlockchainAPI({ explorerClient: ethTestnetHttpClient })
   const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
 
   return new AccountBalanceUseCase({

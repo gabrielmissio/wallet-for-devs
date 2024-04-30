@@ -7,13 +7,25 @@ module.exports = class HttpHelper {
   }
 
   async fetch (url, { timeout, ...options } = {}, output) {
-    const fetchUrl = this.baseURL ? `${this.baseURL}/${url}` : url
+    const fetchUrl = this.buildFetchUrl(url)
     const fetchTimeout = timeout || this.globalTimeout
 
     const { timeoutId, signal } = HttpHelper.setRequestTimeout(fetchTimeout)
     const config = { ...options, signal, timeoutId }
 
     return HttpHelper.internalFetch(fetchUrl, config, output)
+  }
+
+  buildFetchUrl = (url) => {
+    if (!url || url.length === 0) {
+      if (!this.baseURL) {
+        throw new Error('URL is required when baseURL is not set')
+      }
+
+      return this.baseURL
+    }
+
+    return this.baseURL ? `${this.baseURL}/${url}` : url
   }
 
   static fetch = async (url, { timeout, ...options } = {}, output) => {
