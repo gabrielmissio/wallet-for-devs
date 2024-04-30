@@ -1,4 +1,5 @@
 const BTCTestnetUseCasesComposer = require('../../main/composers/btc-use-case-composer')
+const ETHTestnetUseCasesComposer = require('../../main/composers/eth-use-case-composer')
 
 module.exports = class UseCaseFactory {
   static makeUseCase ({ useCase, protocol, useTestnet }) {
@@ -6,6 +7,8 @@ module.exports = class UseCaseFactory {
 
     if (protocol === 'BTC_SEGWIT' && useTestnet) {
       composer = BTCTestnetUseCasesComposer
+    } else if (protocol === 'ETH' && useTestnet) {
+      composer = ETHTestnetUseCasesComposer
     } else {
       throw new Error('Invalid protocol')
     }

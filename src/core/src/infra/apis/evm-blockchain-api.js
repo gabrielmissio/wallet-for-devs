@@ -18,6 +18,8 @@ module.exports = class EVMBlockchainAPI {
     if (fetchResult.body.message === 'NOTOK') {
       throw new Error(fetchResult.body.result)
     }
+    // NOTE: Temporary workaround to avoid Etherscan API rate limit
+    await new Promise(resolve => setTimeout(resolve, 250))
 
     return fetchResult.body.result
   }

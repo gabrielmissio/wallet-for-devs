@@ -1,6 +1,6 @@
 const Joi = require('joi')
 
-const allowedProtocols = ['BTC_SEGWIT', 'BTC_LEGACY']
+const allowedProtocols = ['BTC_SEGWIT', 'BTC_LEGACY', 'ETH']
 
 exports.startWallet = Joi.object({
   body: Joi.object({

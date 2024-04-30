@@ -50,10 +50,10 @@ module.exports = class EVMInitTxStrategy {
       parseToHex(tx.data),
       tx.accessList || []
     ]
-    const unsignedRawTx = '0x02' + Buffer.from(encode(params)).toString('hex')
+    const unsignedTx = '0x02' + Buffer.from(encode(params)).toString('hex')
     // const signed = this.keyRepository.signTransaction({ keyName, path, unsignedRawTx })
 
-    return { unsignedRawTx }
+    return { unsignedTx }
   }
 }
 

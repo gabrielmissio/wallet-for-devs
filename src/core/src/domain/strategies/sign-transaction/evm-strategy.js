@@ -4,7 +4,7 @@ module.exports = class EVMSignStrategy {
   }
 
   async signTransaction ({ keyName, path, payload }) {
-    const signedTx = await this.keyRepository.signTransaction({ keyName, path, unsignedRawTx: payload })
+    const signedTx = await this.keyRepository.signTransaction({ keyName, path, unsignedTx: payload })
 
     return { signedTx }
   }

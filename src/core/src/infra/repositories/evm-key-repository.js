@@ -33,11 +33,11 @@ module.exports = class EVMKeyRepository {
     }
   }
 
-  async signTransaction ({ keyName, path, unsignedRawTx }) {
+  async signTransaction ({ keyName, path, unsignedTx }) {
     const { privateKey } = this.getKeyPair({ keyName, path })
 
     const wallet = new ethers.Wallet(privateKey)
-    const signedTx = await wallet.signTransaction(unsignedRawTx)
+    const signedTx = await wallet.signTransaction(unsignedTx)
 
     return signedTx
   }
