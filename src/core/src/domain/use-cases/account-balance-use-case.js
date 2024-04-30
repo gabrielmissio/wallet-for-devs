@@ -1,8 +1,9 @@
 module.exports = class AccountBalanceUseCase {
-  constructor ({ blockchainAPI, keyRepository, gapLimit }) {
+  constructor ({ blockchainAPI, keyRepository, gapLimit, useChangePath = true }) {
     this.blockchainAPI = blockchainAPI
     this.keyRepository = keyRepository
     this.gapLimit = gapLimit
+    this.useChangePath = useChangePath
 
     // TODO: review if you really need this
     this.usedAddresses = new Map()
@@ -10,13 +11,13 @@ module.exports = class AccountBalanceUseCase {
 
   // BIP44 standard: m / purpose' / coin_type' / account' / change / address_index
   // Base path means the first 4 parts of the path (m / purpose' / coin_type' / account')
-  async discoverAccountBalance ({ keyName, basePath, useChangePath = true }) {
+  async discoverAccountBalance ({ keyName, basePath }) {
     const promises = []
     let addressIndex = 0
     let consecutiveEmptyAddresses = 0
     console.log('starting account balance discovery')
 
-    let changeAccountFound = !useChangePath // if useChangePath is false, we don't need to find a change account
+    let changeAccountFound = !this.useChangePath // if useChangePath is false, we don't need to find a change account
 
     while (consecutiveEmptyAddresses < this.gapLimit || !changeAccountFound) {
       const paymentPath = `${basePath}/0/${addressIndex}`

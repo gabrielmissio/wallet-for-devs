@@ -12,8 +12,7 @@ const accountDiscoveryUseCase = makeETHTestnetUseCase({ gapLimit: 5 })
 
 accountDiscoveryUseCase.discoverFirstEmptyAccount({
   keyName,
-  basePath: btcSLegacyTestnetBasePath,
-  useChangePath: false
+  basePath: btcSLegacyTestnetBasePath
 }).then(console.log)
 
 // eslint-disable-next-line no-unused-vars
@@ -51,6 +50,7 @@ function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
   return new AccountDiscoveryUseCase({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    gapLimit
+    gapLimit,
+    useChangePath: false // avoid unnecessary change address discovery
   })
 }

@@ -1,11 +1,12 @@
 module.exports = class AccountDiscoveryUseCase {
-  constructor ({ blockchainAPI, keyRepository, gapLimit }) {
+  constructor ({ blockchainAPI, keyRepository, gapLimit, useChangePath = true }) {
     this.blockchainAPI = blockchainAPI
     this.keyRepository = keyRepository
     this.gapLimit = gapLimit
+    this.useChangePath = useChangePath
   }
 
-  async discoverFirstEmptyAccount ({ keyName, basePath, useChangePath = true }) {
+  async discoverFirstEmptyAccount ({ keyName, basePath }) {
     // BIP44 standard: m / purpose' / coin_type' / account' / change / address_index
     // Base path means the first 3 parts of the path (m / purpose' / coin_type')
     let accountIndex = 0
@@ -16,7 +17,7 @@ module.exports = class AccountDiscoveryUseCase {
       const internalPath = `${basePath}/${accountIndex}'/1` // Path for internal addresses
 
       isEmptyAccount = await this.checkAccountActivity({ keyName, path: externalPath })
-      if (isEmptyAccount && useChangePath) {
+      if (isEmptyAccount && this.useChangePath) {
         isEmptyAccount = await this.checkAccountActivity({ keyName, path: internalPath })
       }
 

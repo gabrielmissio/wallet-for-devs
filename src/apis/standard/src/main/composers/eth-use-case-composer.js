@@ -34,7 +34,9 @@ function makeAccountBalanceUseCase ({ gapLimit = 5 } = {}) {
   return new AccountBalanceUseCase({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    gapLimit
+    gapLimit,
+    useChangePath: false // avoid unnecessary change address discovery
+    // EVM Protocol doesn't have change addresses
   })
 }
 
@@ -42,7 +44,9 @@ function makeAccountDiscoveryUseCase ({ gapLimit = 5 } = {}) {
   return new AccountDiscoveryUseCase({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    gapLimit
+    gapLimit,
+    useChangePath: false // avoid unnecessary change address discovery
+    // EVM Protocol doesn't have change addresses
   })
 }
 
