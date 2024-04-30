@@ -42,5 +42,5 @@ class QRCodeExportStrategy {
 }
 
 function getProtocol (path) {
-  return path.split('/')[1] === "84'" ? 'btc_segwit' : 'btc'
+  return path.split('/')[1] === "84'" ? 'btc_segwit' : 'eth'
 }

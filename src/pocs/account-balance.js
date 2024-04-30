@@ -12,7 +12,8 @@ const accountBalanceUseCase = makeETHTestnetUseCase({ gapLimit: 5 })
 
 accountBalanceUseCase.discoverAccountBalance({
   keyName,
-  basePath: btcLegacyTestnetBasePath
+  basePath: btcLegacyTestnetBasePath,
+  useChangePath: false // default is true
 }).then(({ balances, totalBalance }) => {
   console.table(balances)
   console.log(`total balance: ${totalBalance}`)

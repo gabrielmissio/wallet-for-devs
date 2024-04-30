@@ -32,4 +32,13 @@ module.exports = class EVMKeyRepository {
       publicKey
     }
   }
+
+  async signTransaction ({ keyName, path, unsignedRawTx }) {
+    const { privateKey } = this.getKeyPair({ keyName, path })
+
+    const wallet = new ethers.Wallet(privateKey)
+    const signedTx = await wallet.signTransaction(unsignedRawTx)
+
+    return signedTx
+  }
 }
