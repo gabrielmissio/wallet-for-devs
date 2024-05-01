@@ -1,5 +1,6 @@
 const BTCTestnetUseCasesComposer = require('../../main/composers/btc-use-case-composer')
 const ETHTestnetUseCasesComposer = require('../../main/composers/eth-use-case-composer')
+const MATICTestnetUseCasesComposer = require('../../main/composers/matic-use-case-composer')
 
 module.exports = class UseCaseFactory {
   static makeUseCase ({ useCase, protocol, useTestnet }) {
@@ -9,6 +10,8 @@ module.exports = class UseCaseFactory {
       composer = BTCTestnetUseCasesComposer
     } else if (protocol === 'ETH' && useTestnet) {
       composer = ETHTestnetUseCasesComposer
+    } else if (protocol === 'MATIC' && useTestnet) {
+      composer = MATICTestnetUseCasesComposer
     } else {
       throw new Error('Invalid protocol')
     }

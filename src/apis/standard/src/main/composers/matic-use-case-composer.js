@@ -1,5 +1,5 @@
 // INFRA
-const { EtherscanAPI: EVMBlockchainAPI } = require('../../../../../core/src/infra/apis/evm-blockchain-api')
+const { OkLinkAPI: EVMBlockchainAPI } = require('../../../../../core/src/infra/apis/evm-blockchain-api')
 const HTTPHelper = require('../../../../../core/src/infra/helpers/http-helper')
 const EVMKeyRepository = require('../../../../../core/src/infra/repositories/evm-key-repository')
 
@@ -16,11 +16,11 @@ const SignTxUseCase = require('../../../../../core/src/domain/use-cases/sign-tra
 
 // COMPONENTS
 const ethTestnetExplorerClient = new HTTPHelper({
-  baseURL: process.env.ETH_TESTNET_BLOCKCHAIN_API_URL,
+  baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
   globalTimeout: 10000
 })
 const ethTestnetRCPClient = new HTTPHelper({
-  baseURL: process.env.ETH_TESTNET_RPC_URL,
+  baseURL: process.env.MATIC_TESTNET_RCP_URL,
   globalTimeout: 10000
 })
 const evmTestnetBlockchainApi = new EVMBlockchainAPI({
@@ -82,8 +82,8 @@ function makeInitTxUseCase () {
   return new InitTxEVMStrategy({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    rcpURL: process.env.ETH_TESTNET_RPC_URL,
-    chainId: 11155111 // sepolia chainId
+    rcpURL: process.env.MATIC_TESTNET_RCP_URL,
+    chainId: 80002 // Amoy chainId
   })
 }
 
