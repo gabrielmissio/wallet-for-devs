@@ -32,7 +32,7 @@ module.exports = class EVMInitTxStrategy {
       nonce,
       data: '0x',
       to: recipient,
-      value: 5000000000000,
+      value: amount,
       gasLimit: '21000',
       gasPrice: feeData.gasPrice,
       maxFeePerGas: feeData.maxFeePerGas,
