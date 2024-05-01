@@ -32,7 +32,7 @@ module.exports = class EVMInitTxStrategy {
       nonce,
       data: '0x',
       to: recipient,
-      value: amount,
+      value: 5000000000000,
       gasLimit: '21000',
       gasPrice: feeData.gasPrice,
       maxFeePerGas: feeData.maxFeePerGas,
@@ -44,12 +44,13 @@ module.exports = class EVMInitTxStrategy {
       parseToHex(tx.nonce),
       tx.maxPriorityFeePerGas, // parseToHex(tx.maxPriorityFeePerGas),
       tx.maxFeePerGas, // parseToHex(tx.maxFeePerGas),
-      tx.gasLimit, // parseToHex(tx.gasLimit),
+      parseToHex(tx.gasLimit),
       tx.to,
       parseToHex(tx.value),
       parseToHex(tx.data),
       tx.accessList || []
     ]
+    console.log('params', params)
     const unsignedTx = '0x02' + Buffer.from(encode(params)).toString('hex')
     // const signed = this.keyRepository.signTransaction({ keyName, path, unsignedRawTx })
 
@@ -73,8 +74,8 @@ function parseToHex (value) {
   if (value.startsWith('0x')) {
     value = value.slice(2)
   }
-  if (value === '0') {
+  if (value === '0' || value === '') {
     return '0x'
   }
-  return '0x' + parseInt(value, 16).toString(16)
+  return '0x' + parseInt(value).toString(16)
 }

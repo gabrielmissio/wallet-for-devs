@@ -33,7 +33,8 @@ module.exports = class EVMKeyRepository {
     }
   }
 
-  async signTransaction ({ keyName, path, unsignedTx }) {
+  async signTransaction ({ keyName, path: basePath, unsignedTx }) {
+    const path = `${basePath}/0/0` // TODO: get derivation path dynamically
     const { privateKey } = this.getKeyPair({ keyName, path })
 
     const wallet = new ethers.Wallet(privateKey)
