@@ -8,7 +8,7 @@ keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 // const btcSegWitTestnetBasePath = "m/84'/1'/0'"
 const btcLegacyTestnetBasePath = "m/44'/1'/0'"
 
-const addressDiscoveryUseCase = makeETHTestnetUseCase({ gapLimit: 5 })
+const addressDiscoveryUseCase = makeMATICTestnetUseCase({ gapLimit: 5 })
 
 addressDiscoveryUseCase.discoverPaymentAddress({
   keyName,
@@ -42,8 +42,9 @@ function makeBTCTestnetUseCase ({ gapLimit = 5 }) {
   })
 }
 
+// eslint-disable-next-line no-unused-vars
 function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
-  const EVMBlockchainAPI = require('../core/src/infra/apis/evm-blockchain-api')
+  const { EtherscanAPI } = require('../core/src/infra/apis/evm-blockchain-api')
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
   const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
 
@@ -51,7 +52,26 @@ function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
     baseURL: process.env.ETH_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new EVMBlockchainAPI({ explorerClient: ethTestnetHttpClient })
+  const evmTestnetBlockchainApi = new EtherscanAPI({ explorerClient: ethTestnetHttpClient })
+  const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
+
+  return new AddressDiscoveryUseCase({
+    blockchainAPI: evmTestnetBlockchainApi,
+    keyRepository: evmKeyRepositoryTestnet,
+    gapLimit: 5
+  })
+}
+
+function makeMATICTestnetUseCase ({ gapLimit = {} } = {}) {
+  const { OkLinkAPI } = require('../core/src/infra/apis/evm-blockchain-api')
+  const HttpHelper = require('../core/src/infra/helpers/http-helper')
+  const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
+
+  const ethTestnetHttpClient = new HttpHelper({
+    baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
+    globalTimeout: 10000
+  })
+  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetHttpClient })
   const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
 
   return new AddressDiscoveryUseCase({

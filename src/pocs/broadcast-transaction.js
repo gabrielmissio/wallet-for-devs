@@ -24,7 +24,7 @@ function makeBTCTestnetUseCase () {
 }
 
 function makeETHTestnetUseCase () {
-  const EVMBlockchainAPI = require('../core/src/infra/apis/evm-blockchain-api')
+  const { EtherscanAPI } = require('../core/src/infra/apis/evm-blockchain-api')
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
 
   const ethTestnetExplorerClient = new HttpHelper({
@@ -35,7 +35,7 @@ function makeETHTestnetUseCase () {
     baseURL: process.env.ETH_TESTNET_RPC_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new EVMBlockchainAPI({
+  const evmTestnetBlockchainApi = new EtherscanAPI({
     explorerClient: ethTestnetExplorerClient,
     rcpClient: ethTestnetRCPClient
   })

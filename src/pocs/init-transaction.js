@@ -39,7 +39,7 @@ function makeBTCTestnetUseCase () {
 }
 
 function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
-  const EVMBlockchainAPI = require('../core/src/infra/apis/evm-blockchain-api')
+  const { EtherscanAPI } = require('../core/src/infra/apis/evm-blockchain-api')
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
   const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
 
@@ -47,7 +47,7 @@ function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
     baseURL: process.env.ETH_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new EVMBlockchainAPI({ explorerClient: ethTestnetHttpClient })
+  const evmTestnetBlockchainApi = new EtherscanAPI({ explorerClient: ethTestnetHttpClient })
   const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
 
   return new EVMInitTxStrategy({

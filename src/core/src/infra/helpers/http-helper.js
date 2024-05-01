@@ -8,6 +8,7 @@ module.exports = class HttpHelper {
 
   async fetch (url, { timeout, ...options } = {}, output) {
     const fetchUrl = this.buildFetchUrl(url)
+    console.log({ fetchUrl })
     const fetchTimeout = timeout || this.globalTimeout
 
     const { timeoutId, signal } = HttpHelper.setRequestTimeout(fetchTimeout)

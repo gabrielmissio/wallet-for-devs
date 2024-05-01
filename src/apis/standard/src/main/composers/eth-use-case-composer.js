@@ -1,5 +1,5 @@
 // INFRA
-const EVMBlockchainAPI = require('../../../../../core/src/infra/apis/evm-blockchain-api')
+const { EtherscanAPI: EVMBlockchainAPI } = require('../../../../../core/src/infra/apis/evm-blockchain-api')
 const HTTPHelper = require('../../../../../core/src/infra/helpers/http-helper')
 const EVMKeyRepository = require('../../../../../core/src/infra/repositories/evm-key-repository')
 
