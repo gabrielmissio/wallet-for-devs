@@ -10,7 +10,7 @@ keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 // const btcSegWitTestnetBasePath = "m/84'/1'/0'"
 const btcSLegacyTestnetBasePath = "m/44'/1'/0'"
 
-const exportAccountUseCase = makeBTCTestnetUseCase()
+const exportAccountUseCase = makeUseCase('eth')
 
 exportAccountUseCase.exportReadOnlyAccount({
   keyName, path: btcSLegacyTestnetBasePath
@@ -18,10 +18,29 @@ exportAccountUseCase.exportReadOnlyAccount({
   qrcode.generate(data.qrCodeData, { small: true })
 })
 
+function makeUseCase (option) {
+  switch (option) {
+    case 'btc':
+      return makeBTCTestnetUseCase()
+    case 'eth':
+      return makeETHTestnetUseCase()
+    default:
+      throw new Error('Invalid option')
+  }
+}
+
 function makeBTCTestnetUseCase () {
   const BTCKeyRepository = require('../core/src/infra/repositories/btc-key-repository')
 
   return new ExportAccountUseCase({
     keyRepository: new BTCKeyRepository({ keyToMnemonic })
+  })
+}
+
+function makeETHTestnetUseCase () {
+  const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
+
+  return new ExportAccountUseCase({
+    keyRepository: new EVMKeyRepository({ keyToMnemonic })
   })
 }

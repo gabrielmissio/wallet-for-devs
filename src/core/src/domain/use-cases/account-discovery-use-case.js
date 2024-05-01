@@ -1,8 +1,9 @@
 module.exports = class AccountDiscoveryUseCase {
-  constructor ({ blockchainAPI, keyRepository, gapLimit }) {
+  constructor ({ blockchainAPI, keyRepository, gapLimit, useChangePath = true }) {
     this.blockchainAPI = blockchainAPI
     this.keyRepository = keyRepository
     this.gapLimit = gapLimit
+    this.useChangePath = useChangePath
   }
 
   async discoverFirstEmptyAccount ({ keyName, basePath }) {
@@ -16,7 +17,7 @@ module.exports = class AccountDiscoveryUseCase {
       const internalPath = `${basePath}/${accountIndex}'/1` // Path for internal addresses
 
       isEmptyAccount = await this.checkAccountActivity({ keyName, path: externalPath })
-      if (isEmptyAccount) {
+      if (isEmptyAccount && this.useChangePath) {
         isEmptyAccount = await this.checkAccountActivity({ keyName, path: internalPath })
       }
 
