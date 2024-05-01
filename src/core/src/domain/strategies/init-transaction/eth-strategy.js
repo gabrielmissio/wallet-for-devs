@@ -21,6 +21,7 @@ module.exports = class EVMInitTxStrategy {
 
   async initTransaction ({ keyName, basePath, recipient, amount }) {
     const path = `${basePath}/0/0` // TODO: get derivation path dynamically
+    console.log({ path })
     const keyPair = this.keyRepository.getKeyPair({ keyName, path })
 
     const fromAddress = keyPair.address
@@ -28,7 +29,7 @@ module.exports = class EVMInitTxStrategy {
     const feeData = await this.provider.getFeeData()
 
     const tx = {
-      chainId: 11155111,
+      chainId: 80002, // 11155111,
       nonce,
       data: '0x',
       to: recipient,

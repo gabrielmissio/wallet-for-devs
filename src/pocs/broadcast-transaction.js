@@ -2,7 +2,7 @@ require('dotenv').config()
 const BroadcastTransactionUseCase = require('../core/src/domain/use-cases/broadcast-transaction-use-case')
 
 const signedTx = process.env.SIGNED_RAW_TX
-const broadcastTransactionUseCase = makeETHTestnetUseCase()
+const broadcastTransactionUseCase = makeMATICTestnetUseCase()
 
 broadcastTransactionUseCase.broadcastTransaction({ signedTx })
   .then(console.log)
@@ -23,6 +23,7 @@ function makeBTCTestnetUseCase () {
   })
 }
 
+// eslint-disable-next-line no-unused-vars
 function makeETHTestnetUseCase () {
   const { EtherscanAPI } = require('../core/src/infra/apis/evm-blockchain-api')
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
@@ -39,6 +40,25 @@ function makeETHTestnetUseCase () {
     explorerClient: ethTestnetExplorerClient,
     rcpClient: ethTestnetRCPClient
   })
+
+  return new BroadcastTransactionUseCase({
+    blockchainAPI: evmTestnetBlockchainApi
+  })
+}
+
+function makeMATICTestnetUseCase ({ gapLimit = {} } = {}) {
+  const { OkLinkAPI } = require('../core/src/infra/apis/evm-blockchain-api')
+  const HttpHelper = require('../core/src/infra/helpers/http-helper')
+
+  const ethTestnetHttpClient = new HttpHelper({
+    baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
+    globalTimeout: 10000
+  })
+  const ethTestnetExplorerClient = new HttpHelper({
+    baseURL: process.env.MATIC_TESTNET_RCP_URL,
+    globalTimeout: 10000
+  })
+  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetHttpClient, rcpClient: ethTestnetExplorerClient })
 
   return new BroadcastTransactionUseCase({
     blockchainAPI: evmTestnetBlockchainApi

@@ -190,7 +190,10 @@ module.exports.OkLinkAPI = class OkLinkAPI {
         method: 'eth_sendRawTransaction',
         params: [signedTx],
         id: 1
-      })
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
     if (fetchResult.status !== 200) {
       throw new Error('Error fetching balance')

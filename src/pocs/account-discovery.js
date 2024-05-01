@@ -8,7 +8,7 @@ keyToMnemonic.set(keyName, process.env.DEVELOPMENT_MNEMONIC)
 // const btcSegWitTestnetBasePath = "m/84'/1'"
 const btcSLegacyTestnetBasePath = "m/44'/1'"
 
-const accountDiscoveryUseCase = makeETHTestnetUseCase({ gapLimit: 5 })
+const accountDiscoveryUseCase = makeMATICTestnetUseCase({ gapLimit: 5 })
 
 accountDiscoveryUseCase.discoverFirstEmptyAccount({
   keyName,
@@ -35,6 +35,7 @@ function makeBTCTestnetUseCase ({ gapLimit = 5 }) {
   })
 }
 
+// eslint-disable-next-line no-unused-vars
 function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
   const { EtherscanAPI } = require('../core/src/infra/apis/evm-blockchain-api')
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
@@ -51,6 +52,30 @@ function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
     gapLimit,
+    useChangePath: false // avoid unnecessary change address discovery
+  })
+}
+
+function makeMATICTestnetUseCase ({ gapLimit = {} } = {}) {
+  const { OkLinkAPI } = require('../core/src/infra/apis/evm-blockchain-api')
+  const HttpHelper = require('../core/src/infra/helpers/http-helper')
+  const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
+
+  const ethTestnetHttpClient = new HttpHelper({
+    baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
+    globalTimeout: 10000
+  })
+  const ethTestnetExplorerClient = new HttpHelper({
+    baseURL: process.env.MATIC_TESTNET_RCP_URL,
+    globalTimeout: 10000
+  })
+  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetHttpClient, rcpClient: ethTestnetExplorerClient })
+  const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
+
+  return new AccountDiscoveryUseCase({
+    blockchainAPI: evmTestnetBlockchainApi,
+    keyRepository: evmKeyRepositoryTestnet,
+    gapLimit: 5,
     useChangePath: false // avoid unnecessary change address discovery
   })
 }

@@ -32,7 +32,7 @@ function makeComponents (option) {
     },
 
     ethTestnet: {
-      basePath: "m/44'/1'/0'/0/0",
+      basePath: "m/44'/1'/0'",
       payload: process.env.RAW_TX,
       signTxUseCase: makeETHTestnetUseCase()
     }
