@@ -82,7 +82,8 @@ function makeInitTxUseCase () {
   return new InitTxEVMStrategy({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    rcpURL: process.env.ETH_TESTNET_RPC_URL
+    rcpURL: process.env.ETH_TESTNET_RPC_URL,
+    chainId: 11155111 // sepolia chainId
   })
 }
 

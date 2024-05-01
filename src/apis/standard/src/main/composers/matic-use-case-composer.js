@@ -82,7 +82,8 @@ function makeInitTxUseCase () {
   return new InitTxEVMStrategy({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    rcpURL: process.env.MATIC_TESTNET_RCP_URL
+    rcpURL: process.env.MATIC_TESTNET_RCP_URL,
+    chainId: 80002 // Amoy chainId
   })
 }
 

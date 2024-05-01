@@ -5,16 +5,16 @@ module.exports = class EVMInitTxStrategy {
   constructor ({
     blockchainAPI, // TODO: Move "provider logic" to blockchainAPI
     keyRepository,
-    gapLimit = 5,
+    chainId,
     rcpURL
     // feePerByte = 1
   }) {
     this.blockchainAPI = blockchainAPI
     this.keyRepository = keyRepository
+    this.chainId = chainId
     // this.feePerByte = feePerByte
-    this.gapLimit = gapLimit
-    this.provider = new ethers.JsonRpcProvider(rcpURL)
 
+    this.provider = new ethers.JsonRpcProvider(rcpURL)
     // TODO: review if you really need this
     // this.usedAddresses = new Map()
   }
@@ -29,7 +29,7 @@ module.exports = class EVMInitTxStrategy {
     const feeData = await this.provider.getFeeData()
 
     const tx = {
-      chainId: 80002, // 11155111,
+      chainId: this.chainId,
       nonce,
       data: '0x',
       to: recipient,
