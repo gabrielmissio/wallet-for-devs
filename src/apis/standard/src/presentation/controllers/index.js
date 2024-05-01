@@ -155,7 +155,13 @@ async function broadcastTransaction (req, res) {
     const useCase = useCaseFactory.makeUseCase({
       useCase: 'broadcast-transaction', protocol, useTestnet
     })
-    const result = await useCase.broadcastTransaction({ signedTx })
+    const { txId } = await useCase.broadcastTransaction({ signedTx })
+
+    // NOTE: maybe it's better to move "getExplorerURL" logic to another layer
+    const result = {
+      txId,
+      explorerURL: getExplorerURL({ protocol, useTestnet }) + '/tx/' + txId
+    }
 
     return res.status(200).json(result)
   } catch (error) {
@@ -183,9 +189,15 @@ async function simpleSendTransaction (req, res) {
     }).signTransaction({
       keyName: walletId, basePath, payload: unsignedTx
     })
-    const result = await useCaseFactory.makeUseCase({
+    const { txId } = await useCaseFactory.makeUseCase({
       useCase: 'broadcast-transaction', protocol, useTestnet
     }).broadcastTransaction({ signedTx })
+
+    // NOTE: maybe it's better to move "getExplorerURL" logic to another layer
+    const result = {
+      txId,
+      explorerURL: getExplorerURL({ protocol, useTestnet }) + '/tx/' + txId
+    }
 
     return res.status(200).json(result)
   } catch (error) {
@@ -203,6 +215,28 @@ function getDerivationPath ({ protocol, account, useTestnet }) {
   }
 
   return `m/${purpose}'/${coinType}'/${account}'`
+}
+
+function getExplorerURL ({ protocol, useTestnet }) {
+  if (protocol === 'BTC_SEGWIT') {
+    return useTestnet
+      ? process.env.BTC_TESTNET_EXPLORER_URL
+      : ''
+  }
+
+  if (protocol === 'ETH') {
+    return useTestnet
+      ? process.env.ETH_TESTNET_EXPLORER_URL
+      : ''
+  }
+
+  if (protocol === 'MATIC') {
+    return useTestnet
+      ? process.env.MATIC_TESTNET_EXPLORER_URL
+      : ''
+  }
+
+  return ''
 }
 
 module.exports = {
