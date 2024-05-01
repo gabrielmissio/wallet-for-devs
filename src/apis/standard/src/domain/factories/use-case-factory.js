@@ -1,4 +1,7 @@
 const BTCTestnetUseCasesComposer = require('../../main/composers/btc-use-case-composer')
+
+// TODO: Create EVM use case composer to remove duplicated code
+const BNBTestnetUseCasesComposer = require('../../main/composers/bnb-use-case-composer')
 const ETHTestnetUseCasesComposer = require('../../main/composers/eth-use-case-composer')
 const MATICTestnetUseCasesComposer = require('../../main/composers/matic-use-case-composer')
 
@@ -8,6 +11,8 @@ module.exports = class UseCaseFactory {
 
     if (protocol === 'BTC_SEGWIT' && useTestnet) {
       composer = BTCTestnetUseCasesComposer
+    } else if (protocol === 'BNB' && useTestnet) {
+      composer = BNBTestnetUseCasesComposer
     } else if (protocol === 'ETH' && useTestnet) {
       composer = ETHTestnetUseCasesComposer
     } else if (protocol === 'MATIC' && useTestnet) {
