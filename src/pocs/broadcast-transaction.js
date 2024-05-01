@@ -50,15 +50,15 @@ function makeMATICTestnetUseCase ({ gapLimit = {} } = {}) {
   const { OkLinkAPI } = require('../core/src/infra/apis/evm-blockchain-api')
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
 
-  const ethTestnetHttpClient = new HttpHelper({
+  const ethTestnetExplorerClient = new HttpHelper({
     baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const ethTestnetExplorerClient = new HttpHelper({
+  const ethTestnetRCPClient = new HttpHelper({
     baseURL: process.env.MATIC_TESTNET_RCP_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetHttpClient, rcpClient: ethTestnetExplorerClient })
+  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetExplorerClient, rcpClient: ethTestnetRCPClient })
 
   return new BroadcastTransactionUseCase({
     blockchainAPI: evmTestnetBlockchainApi

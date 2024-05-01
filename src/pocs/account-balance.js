@@ -44,15 +44,15 @@ function makeETHTestnetUseCase ({ gapLimit = {} } = {}) {
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
   const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
 
-  const ethTestnetHttpClient = new HttpHelper({
+  const ethTestnetExplorerClient = new HttpHelper({
     baseURL: process.env.ETH_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const ethTestnetExplorerClient = new HttpHelper({
+  const ethTestnetRCPClient = new HttpHelper({
     baseURL: process.env.ETH_TESTNET_RPC_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new EtherscanAPI({ explorerClient: ethTestnetHttpClient, rcpClient: ethTestnetExplorerClient })
+  const evmTestnetBlockchainApi = new EtherscanAPI({ explorerClient: ethTestnetExplorerClient, rcpClient: ethTestnetRCPClient })
   const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
 
   return new AccountBalanceUseCase({
@@ -68,15 +68,15 @@ function makeMATICTestnetUseCase ({ gapLimit = {} } = {}) {
   const HttpHelper = require('../core/src/infra/helpers/http-helper')
   const EVMKeyRepository = require('../core/src/infra/repositories/evm-key-repository')
 
-  const ethTestnetHttpClient = new HttpHelper({
+  const ethTestnetExplorerClient = new HttpHelper({
     baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const ethTestnetExplorerClient = new HttpHelper({
+  const ethTestnetRCPClient = new HttpHelper({
     baseURL: process.env.MATIC_TESTNET_RCP_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetHttpClient, rcpClient: ethTestnetExplorerClient })
+  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetExplorerClient, rcpClient: ethTestnetRCPClient })
   const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
 
   return new AccountBalanceUseCase({
