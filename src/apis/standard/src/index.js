@@ -1,6 +1,8 @@
-require('dotenv').config({ path: '../../../.env' })
-const app = require('./main/app')
+if (process.env.IS_LOCAL === 'true') {
+  require('dotenv').config({ path: '../../../.env' })
+}
 
+const app = require('./main/app')
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT, () => {
