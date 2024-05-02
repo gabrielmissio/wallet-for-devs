@@ -19,13 +19,13 @@ const ethTestnetExplorerClient = new HTTPHelper({
   baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
   globalTimeout: 10000
 })
-const ethTestnetRCPClient = new HTTPHelper({
-  baseURL: process.env.MATIC_TESTNET_RCP_URL,
+const ethTestnetRPCClient = new HTTPHelper({
+  baseURL: process.env.MATIC_TESTNET_RPC_URL,
   globalTimeout: 10000
 })
 const evmTestnetBlockchainApi = new EVMBlockchainAPI({
   explorerClient: ethTestnetExplorerClient,
-  rcpClient: ethTestnetRCPClient
+  rpcClient: ethTestnetRPCClient
 })
 const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic: initializedWallets }) // default network is testnet
 
@@ -82,7 +82,7 @@ function makeInitTxUseCase () {
   return new InitTxEVMStrategy({
     blockchainAPI: evmTestnetBlockchainApi,
     keyRepository: evmKeyRepositoryTestnet,
-    rcpURL: process.env.MATIC_TESTNET_RCP_URL,
+    rpcURL: process.env.MATIC_TESTNET_RPC_URL,
     chainId: 80002 // Amoy chainId
   })
 }

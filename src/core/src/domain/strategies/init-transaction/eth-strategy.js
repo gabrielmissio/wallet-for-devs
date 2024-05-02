@@ -6,7 +6,7 @@ module.exports = class EVMInitTxStrategy {
     blockchainAPI, // TODO: Move "provider logic" to blockchainAPI
     keyRepository,
     chainId,
-    rcpURL
+    rpcURL
     // feePerByte = 1
   }) {
     this.blockchainAPI = blockchainAPI
@@ -14,7 +14,7 @@ module.exports = class EVMInitTxStrategy {
     this.chainId = chainId
     // this.feePerByte = feePerByte
 
-    this.provider = new ethers.JsonRpcProvider(rcpURL)
+    this.provider = new ethers.JsonRpcProvider(rpcURL)
     // TODO: review if you really need this
     // this.usedAddresses = new Map()
   }

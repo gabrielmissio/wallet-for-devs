@@ -65,11 +65,11 @@ function makeMATICTestnetUseCase ({ gapLimit = {} } = {}) {
     baseURL: process.env.MATIC_TESTNET_BLOCKCHAIN_API_URL,
     globalTimeout: 10000
   })
-  const ethTestnetRCPClient = new HttpHelper({
-    baseURL: process.env.MATIC_TESTNET_RCP_URL,
+  const ethTestnetRPCClient = new HttpHelper({
+    baseURL: process.env.MATIC_TESTNET_RPC_URL,
     globalTimeout: 10000
   })
-  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetExplorerClient, rcpClient: ethTestnetRCPClient })
+  const evmTestnetBlockchainApi = new OkLinkAPI({ explorerClient: ethTestnetExplorerClient, rpcClient: ethTestnetRPCClient })
   const evmKeyRepositoryTestnet = new EVMKeyRepository({ keyToMnemonic })
 
   return new AccountDiscoveryUseCase({

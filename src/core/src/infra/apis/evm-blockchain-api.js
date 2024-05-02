@@ -1,8 +1,8 @@
 /*
 module.exports = class EVMBlockchainAPI {
-  constructor ({ explorerClient, rcpClient, clientOption = 'etherscan' }) {
+  constructor ({ explorerClient, rpcClient, clientOption = 'etherscan' }) {
     this.explorerClient = explorerClient
-    this.rcpClient = rcpClient
+    this.rpcClient = rpcClient
     this.clientOption = clientOption
   }
 
@@ -26,7 +26,7 @@ module.exports = class EVMBlockchainAPI {
   }
 
   async getBalance (address) {
-    const fetchResult = await this.rcpClient.fetch('', {
+    const fetchResult = await this.rpcClient.fetch('', {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
@@ -46,7 +46,7 @@ module.exports = class EVMBlockchainAPI {
   }
 
   async broadcastTransaction (signedTx) {
-    const fetchResult = await this.rcpClient.fetch('', {
+    const fetchResult = await this.rpcClient.fetch('', {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
@@ -68,9 +68,9 @@ module.exports = class EVMBlockchainAPI {
 */
 
 module.exports.EtherscanAPI = class EtherscanAPI {
-  constructor ({ explorerClient, rcpClient }) {
+  constructor ({ explorerClient, rpcClient }) {
     this.explorerClient = explorerClient
-    this.rcpClient = rcpClient
+    this.rpcClient = rpcClient
   }
 
   async getTransactions (address) {
@@ -93,7 +93,7 @@ module.exports.EtherscanAPI = class EtherscanAPI {
   }
 
   async getBalance (address) {
-    const fetchResult = await this.rcpClient.fetch('', {
+    const fetchResult = await this.rpcClient.fetch('', {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
@@ -113,7 +113,7 @@ module.exports.EtherscanAPI = class EtherscanAPI {
   }
 
   async broadcastTransaction (signedTx) {
-    const fetchResult = await this.rcpClient.fetch('', {
+    const fetchResult = await this.rpcClient.fetch('', {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
@@ -134,9 +134,9 @@ module.exports.EtherscanAPI = class EtherscanAPI {
 }
 
 module.exports.OkLinkAPI = class OkLinkAPI {
-  constructor ({ explorerClient, rcpClient }) {
+  constructor ({ explorerClient, rpcClient }) {
     this.explorerClient = explorerClient
-    this.rcpClient = rcpClient
+    this.rpcClient = rpcClient
   }
 
   async getTransactions (address) {
@@ -160,7 +160,7 @@ module.exports.OkLinkAPI = class OkLinkAPI {
   }
 
   async getBalance (address) {
-    const fetchResult = await this.rcpClient.fetch('', {
+    const fetchResult = await this.rpcClient.fetch('', {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
@@ -183,7 +183,7 @@ module.exports.OkLinkAPI = class OkLinkAPI {
   }
 
   async broadcastTransaction (signedTx) {
-    const fetchResult = await this.rcpClient.fetch('', {
+    const fetchResult = await this.rpcClient.fetch('', {
       method: 'POST',
       body: JSON.stringify({
         jsonrpc: '2.0',
